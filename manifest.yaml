@@ -2,6 +2,7 @@ version: 0.0.1
 type: plugin
 author: zyileven
 name: mineru-tianshu
+license: Apache-2.0
 label:
   en_US: MinerU Tianshu
   ja_JP: MinerU Tianshu

@@ -2,8 +2,9 @@
 
 > Enterprise-level multi-GPU document parsing service powered by MinerU
 
-[![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](https://github.com/your-repo/mineru-tianshu-plugin)
+[![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](https://github.com/your-username/mineru-tianshu-plugin)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
+[![Dify Plugin](https://img.shields.io/badge/Dify-Plugin-orange.svg)](https://dify.ai)
 
 ## Overview
 
@@ -259,6 +260,14 @@ Contributions are welcome! Please:
 
 Apache License 2.0 - see [LICENSE](LICENSE) for details.
 
+## Support
+
+If you encounter any issues or have questions:
+
+- **GitHub Issues**: [Report issues or request features](https://github.com/your-username/mineru-tianshu-plugin/issues)
+- **Email Support**: support@your-domain.com
+
+We strive to respond to all support requests within 48 hours.
 
 ## Acknowledgments
 
