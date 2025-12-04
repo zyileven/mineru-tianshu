@@ -1,0 +1,50 @@
+identity:
+  name: "get_parse_result"
+  author: "zyileven"
+  label:
+    en_US: "Get Parse Result"
+    zh_Hans: "获取解析结果"
+    pt_BR: "Obter Resultado da Análise"
+    ja_JP: "解析結果を取得"
+description:
+  human:
+    en_US: "Retrieve the parsing result for a previously submitted task using its task ID."
+    zh_Hans: "使用任务 ID 获取之前提交的任务的解析结果。"
+    pt_BR: "Recuperar o resultado da análise de uma tarefa enviada anteriormente usando seu ID de tarefa."
+    ja_JP: "タスクIDを使用して、以前に送信したタスクの解析結果を取得します。"
+  llm: "Get the status and result of a document parsing task by task_id. Returns the parsed Markdown content if the task is completed."
+parameters:
+  - name: task_id
+    type: string
+    required: true
+    label:
+      en_US: Task ID
+      zh_Hans: 任务 ID
+      pt_BR: ID da Tarefa
+      ja_JP: タスクID
+    human_description:
+      en_US: "The task ID from parse_document_async output"
+      zh_Hans: "来自 parse_document_async 的任务 ID"
+      pt_BR: "O ID da tarefa de parse_document_async"
+      ja_JP: "parse_document_async からのタスクID"
+    llm_description: "The task_id from the previous parse_document_async node. This will be automatically populated from the workflow variables."
+    form: llm
+  - name: include_images
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Include Images Info
+      zh_Hans: 包含图片信息
+      pt_BR: Incluir Informações de Imagens
+      ja_JP: 画像情報を含める
+    human_description:
+      en_US: "Whether to include extracted images information"
+      zh_Hans: "是否包含提取的图片信息"
+      pt_BR: "Se deve incluir informações de imagens extraídas"
+      ja_JP: "抽出された画像情報を含めるかどうか"
+    llm_description: "Whether to include information about extracted images"
+    form: form
+extra:
+  python:
+    source: tools/get_parse_result.py

@@ -1,0 +1,158 @@
+identity:
+  name: "parse_document"
+  author: "zyileven"
+  label:
+    en_US: "Parse Document"
+    zh_Hans: "解析文档"
+    pt_BR: "Analisar Documento"
+    ja_JP: "ドキュメント解析"
+description:
+  human:
+    en_US: "Parse PDF, images, or documents into Markdown format synchronously. Supports formulas, tables, and multi-language documents."
+    zh_Hans: "同步解析 PDF、图片或文档为 Markdown 格式。支持公式、表格和多语言文档。"
+    pt_BR: "Analisar PDF, imagens ou documentos em formato Markdown de forma síncrona. Suporta fórmulas, tabelas e documentos multilíngues."
+    ja_JP: "PDF、画像、またはドキュメントを同期的にMarkdown形式に解析します。数式、表、多言語ドキュメントをサポート。"
+  llm: "Parse documents (PDF/images/Office files) into structured Markdown format with support for formulas, tables, and images. This tool submits the document and waits for processing to complete before returning results."
+parameters:
+  - name: file
+    type: file
+    required: true
+    label:
+      en_US: Document File
+      zh_Hans: 文档文件
+      pt_BR: Arquivo de Documento
+      ja_JP: ドキュメントファイル
+    human_description:
+      en_US: "The document file to parse (PDF, images, Office files, etc.)"
+      zh_Hans: "要解析的文档文件（PDF、图片、Office 文件等）"
+      pt_BR: "O arquivo de documento a ser analisado (PDF, imagens, arquivos do Office, etc.)"
+      ja_JP: "解析するドキュメントファイル（PDF、画像、Officeファイルなど）"
+    llm_description: "The document file to parse. Supports PDF, images (PNG, JPG), and Office files (Word, Excel, PowerPoint)."
+    form: llm
+  - name: backend
+    type: select
+    required: false
+    default: "pipeline"
+    options:
+      - value: "pipeline"
+        label:
+          en_US: "Pipeline (Recommended)"
+          zh_Hans: "Pipeline（推荐）"
+          pt_BR: "Pipeline (Recomendado)"
+          ja_JP: "Pipeline（推奨）"
+      - value: "vlm-transformers"
+        label:
+          en_US: "VLM Transformers"
+          zh_Hans: "VLM Transformers"
+          pt_BR: "VLM Transformers"
+          ja_JP: "VLM Transformers"
+      - value: "vlm-vllm-engine"
+        label:
+          en_US: "VLM vLLM Engine"
+          zh_Hans: "VLM vLLM 引擎"
+          pt_BR: "VLM vLLM Engine"
+          ja_JP: "VLM vLLM エンジン"
+    label:
+      en_US: Processing Backend
+      zh_Hans: 处理后端
+      pt_BR: Backend de Processamento
+      ja_JP: 処理バックエンド
+    human_description:
+      en_US: "Choose the processing backend"
+      zh_Hans: "选择处理后端"
+      pt_BR: "Escolha o backend de processamento"
+      ja_JP: "処理バックエンドを選択"
+    llm_description: "Processing backend: pipeline (recommended), vlm-transformers, or vlm-vllm-engine"
+    form: form
+  - name: lang
+    type: select
+    required: false
+    default: "ch"
+    options:
+      - value: "ch"
+        label:
+          en_US: "Chinese"
+          zh_Hans: "中文"
+          pt_BR: "Chinês"
+          ja_JP: "中国語"
+      - value: "en"
+        label:
+          en_US: "English"
+          zh_Hans: "英语"
+          pt_BR: "Inglês"
+          ja_JP: "英語"
+      - value: "korean"
+        label:
+          en_US: "Korean"
+          zh_Hans: "韩语"
+          pt_BR: "Coreano"
+          ja_JP: "韓国語"
+      - value: "japan"
+        label:
+          en_US: "Japanese"
+          zh_Hans: "日语"
+          pt_BR: "Japonês"
+          ja_JP: "日本語"
+    label:
+      en_US: Language
+      zh_Hans: 语言
+      pt_BR: Idioma
+      ja_JP: 言語
+    human_description:
+      en_US: "Document language"
+      zh_Hans: "文档语言"
+      pt_BR: "Idioma do documento"
+      ja_JP: "ドキュメントの言語"
+    llm_description: "Primary language of the document"
+    form: form
+  - name: formula_enable
+    type: boolean
+    required: false
+    default: true
+    label:
+      en_US: Enable Formula Recognition
+      zh_Hans: 启用公式识别
+      pt_BR: Ativar Reconhecimento de Fórmulas
+      ja_JP: 数式認識を有効化
+    human_description:
+      en_US: "Enable mathematical formula recognition"
+      zh_Hans: "启用数学公式识别"
+      pt_BR: "Ativar reconhecimento de fórmulas matemáticas"
+      ja_JP: "数式認識を有効にする"
+    llm_description: "Whether to enable mathematical formula recognition"
+    form: form
+  - name: table_enable
+    type: boolean
+    required: false
+    default: true
+    label:
+      en_US: Enable Table Recognition
+      zh_Hans: 启用表格识别
+      pt_BR: Ativar Reconhecimento de Tabelas
+      ja_JP: 表認識を有効化
+    human_description:
+      en_US: "Enable table structure recognition"
+      zh_Hans: "启用表格结构识别"
+      pt_BR: "Ativar reconhecimento de estrutura de tabelas"
+      ja_JP: "表構造認識を有効にする"
+    llm_description: "Whether to enable table structure recognition"
+    form: form
+  - name: max_wait_time
+    type: number
+    required: false
+    default: 300
+    label:
+      en_US: Max Wait Time (seconds)
+      zh_Hans: 最大等待时间（秒）
+      pt_BR: Tempo Máximo de Espera (segundos)
+      ja_JP: 最大待機時間（秒）
+    human_description:
+      en_US: "Maximum time to wait for processing to complete (default: 300 seconds)"
+      zh_Hans: "等待处理完成的最大时间（默认：300 秒）"
+      pt_BR: "Tempo máximo para aguardar a conclusão do processamento (padrão: 300 segundos)"
+      ja_JP: "処理完了を待つ最大時間（デフォルト：300秒）"
+    llm_description: "Maximum time in seconds to wait for document processing to complete"
+    form: form
+extra:
+  python:
+    source: tools/parse_document.py
