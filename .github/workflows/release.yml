@@ -1,0 +1,44 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # 当推送 v* 标签时触发 (如 v0.0.1)
+
+permissions:
+  contents: write  # 允许创建 Release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download CLI tool
+        run: |
+          mkdir -p $RUNNER_TEMP/bin
+          cd $RUNNER_TEMP/bin
+          wget https://github.com/langgenius/dify-plugin-daemon/releases/download/0.0.6/dify-plugin-linux-amd64
+          chmod +x dify-plugin-linux-amd64
+
+      - name: Get plugin info
+        id: plugin_info
+        run: |
+          PLUGIN_NAME=$(grep "^name:" manifest.yaml | cut -d' ' -f2)
+          VERSION=$(grep "^version:" manifest.yaml | cut -d' ' -f2)
+          echo "plugin_name=$PLUGIN_NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Package Plugin
+        run: |
+          PACKAGE_NAME="${{ steps.plugin_info.outputs.plugin_name }}.difypkg"
+          $RUNNER_TEMP/bin/dify-plugin-linux-amd64 plugin package . -o "$PACKAGE_NAME"
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.PACKAGE_NAME }}
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}  # 使用自动提供的 GITHUB_TOKEN
