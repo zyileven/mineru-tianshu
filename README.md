@@ -112,14 +112,14 @@ Inputs:
   - priority: 5
 
 Output:
-  {{task_id}}
+  {{parse_document_async.text}}  # Returns task_id directly as a string
 ```
 
 **Step 2: Retrieve Result Later**
 ```yaml
 Tool: get_parse_result
 Inputs:
-  - task_id: {{task_id}}
+  - task_id: {{parse_document_async.text}}  # Use the task_id from previous step
 
 Output:
   {{markdown_content}}

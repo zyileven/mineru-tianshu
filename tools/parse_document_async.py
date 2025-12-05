@@ -35,9 +35,6 @@ class ParseDocumentAsyncTool(Tool):
             return
 
         try:
-            # Inform user about submission
-            yield self.create_text_message(f"📤 Submitting document to MinerU Tianshu (async mode)...")
-
             # Get file content
             file_name = file.filename or 'document.pdf'
 
@@ -92,16 +89,24 @@ class ParseDocumentAsyncTool(Tool):
                 yield self.create_text_message(f"❌ Error: API returned success but no task_id. Response: {result}")
                 return
 
-            # Return friendly status message
-            yield self.create_text_message(
-                f"✅ Document submitted successfully!\n"
-                f"📝 File: {file_name}\n"
-                f"🆔 Task ID: {task_id}\n"
-                f"⏳ Use the 'get_parse_result' tool to check processing status."
-            )
+            # Return task_id as text output (primary output - pure string only)
+            yield self.create_text_message(task_id)
 
-            # Return API raw response as JSON
-            yield self.create_json_message(result)
+            # Return enhanced API response as JSON with friendly message
+            json_response = {
+                'task_id': task_id,
+                'success': result.get('success'),
+                'file_name': file_name,
+                'backend': backend,
+                'message': (
+                    f"✅ Document submitted successfully!\n"
+                    f"📝 File: {file_name}\n"
+                    f"🆔 Task ID: {task_id}\n"
+                    f"⏳ Use the 'get_parse_result' tool to check processing status."
+                ),
+                'api_response': result  # Original API response
+            }
+            yield self.create_json_message(json_response)
 
             # Also create variables for easy access
             yield self.create_variable_message('task_id', task_id)

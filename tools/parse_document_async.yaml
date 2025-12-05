@@ -160,15 +160,15 @@ output_schema:
   text:
     type: string
     description:
-      en_US: "The task ID for the submitted parsing task"
-      zh_Hans: "已提交解析任务的任务 ID"
-      pt_BR: "O ID da tarefa de análise enviada"
-      ja_JP: "送信された解析タスクのタスクID"
+      en_US: "The task_id of the submitted parsing task (pure string)"
+      zh_Hans: "已提交解析任务的 task_id(纯字符串)"
+      pt_BR: "O task_id da tarefa de análise enviada (string pura)"
+      ja_JP: "送信された解析タスクの task_id(純粋な文字列)"
   json:
     type: object
     description:
-      en_US: "Full API response including task_id and submission details"
-      zh_Hans: "完整的 API 响应，包括 task_id 和提交详情"
-      pt_BR: "Resposta completa da API incluindo task_id e detalhes de envio"
-      ja_JP: "task_id と送信の詳細を含む完全な API レスポンス"
+      en_US: "Full API response including task_id, success status, and submission details"
+      zh_Hans: "完整的 API 响应,包括 task_id、成功状态和提交详情"
+      pt_BR: "Resposta completa da API incluindo task_id, status de sucesso e detalhes de envio"
+      ja_JP: "task_id、成功ステータス、送信の詳細を含む完全な API レスポンス"
 
