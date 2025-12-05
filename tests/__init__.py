@@ -1,0 +1,3 @@
+"""
+MinerU Tianshu Plugin Tests
+"""

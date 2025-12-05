@@ -2,9 +2,24 @@
 
 > Enterprise-level multi-GPU document parsing service powered by MinerU
 
-[![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](https://github.com/your-username/mineru-tianshu-plugin)
-[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](https://github.com/zyileven/mineru-tianshu)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://github.com/zyileven/mineru-tianshu/blob/main/LICENSE)
 [![Dify Plugin](https://img.shields.io/badge/Dify-Plugin-orange.svg)](https://dify.ai)
+[![GitHub](https://img.shields.io/badge/GitHub-zyileven%2Fmineru--tianshu-181717?logo=github)](https://github.com/zyileven/mineru-tianshu)
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage Examples](#usage-examples)
+- [Configuration](#configuration)
+- [API Server Setup](#api-server-setup)
+- [Troubleshooting](#troubleshooting)
+- [Performance Tips](#performance-tips)
+- [Development](#development)
+- [Contributing](#contributing)
+- [Support](#support)
 
 ## Overview
 
@@ -72,17 +87,31 @@ Error: Invalid file URL '/files/...': Request URL is missing an 'http://' or 'ht
 
 ### Quick Start
 
+#### Option 1: Install from Dify Plugin Marketplace (Recommended)
+
 1. **Install the plugin** in your Dify instance:
-   - Navigate to Tools & Plugins
-   - Search for "MinerU Tianshu"
-   - Click Install
+   - Navigate to **Tools & Plugins** → **Plugin Marketplace**
+   - Search for **"MinerU Tianshu"**
+   - Click **Install**
 
 2. **Configure API Server**:
    - Go to plugin settings
    - Enter your MinerU Tianshu API Server URL
    - Example: `http://localhost:8100`
+   - (Optional) Add API key if your server requires authentication
 
 3. **Start using** in your workflows or agents!
+
+#### Option 2: Manual Installation
+
+1. **Download the plugin package** from [GitHub Releases](https://github.com/zyileven/mineru-tianshu/releases)
+
+2. **Upload to Dify**:
+   - Go to **Tools & Plugins** → **Custom Plugins**
+   - Click **Upload Plugin**
+   - Select the downloaded package
+
+3. **Configure and use** as described in Option 1
 
 ## Usage Examples
 
@@ -224,10 +253,26 @@ See the [MinerU Tianshu Documentation](https://github.com/opendatalab/MinerU) fo
 
 ### Local Testing
 
-1. Clone this repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Configure `.env` file with Dify debug credentials
-4. Run: `python -m main`
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/zyileven/mineru-tianshu.git
+   cd mineru-tianshu
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure environment**
+   - Copy `.env.example` to `.env`
+   - Add your Dify debug credentials
+   - Configure MinerU Tianshu API Server URL
+
+4. **Run the plugin**
+   ```bash
+   python -m main
+   ```
 
 ### Project Structure
 
@@ -245,16 +290,29 @@ mineru-tianshu/
 │   ├── get_parse_result.yaml
 │   └── get_parse_result.py
 ├── requirements.txt
+├── LICENSE
 └── README.md
+```
+
+### Running Tests
+
+```bash
+# Run unit tests
+pytest tests/
+
 ```
 
 ## Contributing
 
 Contributions are welcome! Please:
 
-1. Fork this repository
-2. Create a feature branch
-3. Submit a pull request
+1. Fork the repository at [github.com/zyileven/mineru-tianshu](https://github.com/zyileven/mineru-tianshu)
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+See [CONTRIBUTING.md](https://github.com/zyileven/mineru-tianshu/blob/main/CONTRIBUTING.md) for more details.
 
 ## License
 
@@ -264,8 +322,9 @@ Apache License 2.0 - see [LICENSE](LICENSE) for details.
 
 If you encounter any issues or have questions:
 
-- **GitHub Issues**: [Report issues or request features](https://github.com/your-username/mineru-tianshu-plugin/issues)
-- **Email Support**: support@your-domain.com
+- **GitHub Issues**: [Report issues or request features](https://github.com/zyileven/mineru-tianshu/issues)
+- **Email Support**: zyileven@gmail.com
+- **Documentation**: Check out our [detailed documentation](https://github.com/zyileven/mineru-tianshu#readme)
 
 We strive to respond to all support requests within 48 hours.
 
@@ -276,4 +335,6 @@ We strive to respond to all support requests within 48 hours.
 
 ---
 
-Made with ❤️ by the Tavan Team
+**Made with ❤️ by [zyileven](https://github.com/zyileven)**
+
+⭐ If you find this plugin helpful, please consider giving it a star on [GitHub](https://github.com/zyileven/mineru-tianshu)!
