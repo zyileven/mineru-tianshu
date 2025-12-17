@@ -3,16 +3,13 @@ from typing import Any
 import time
 import requests
 from io import BytesIO
-import os
 import urllib3
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
 
-# 禁用 SSL 警告(如果配置了禁用 SSL 验证)
-DISABLE_SSL_VERIFY = os.getenv('DISABLE_SSL_VERIFY', 'false').lower() == 'true'
-if DISABLE_SSL_VERIFY:
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+# 禁用 SSL 警告
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class ParseDocumentTool(Tool):
     """
@@ -68,7 +65,7 @@ class ParseDocumentTool(Tool):
                     download_response = requests.get(
                         file.url,
                         timeout=60,
-                        verify=not DISABLE_SSL_VERIFY
+                        verify=False
                     )
                     download_response.raise_for_status()
                     file_content = download_response.content
@@ -115,7 +112,7 @@ class ParseDocumentTool(Tool):
 
             # Submit the task
             submit_url = f"{api_server_url}/api/v1/tasks/submit"
-            response = requests.post(submit_url, files=files, data=data, headers=headers, timeout=60, verify=not DISABLE_SSL_VERIFY)
+            response = requests.post(submit_url, files=files, data=data, headers=headers, timeout=60, verify=False)
             response.raise_for_status()
             result = response.json()
 
@@ -146,7 +143,7 @@ class ParseDocumentTool(Tool):
                     return
 
                 # Query task status
-                status_response = requests.get(status_url, headers=headers, timeout=30, verify=not DISABLE_SSL_VERIFY)
+                status_response = requests.get(status_url, headers=headers, timeout=30, verify=False)
                 status_response.raise_for_status()
                 status_result = status_response.json()
 
