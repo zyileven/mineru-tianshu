@@ -1,9 +1,16 @@
 from collections.abc import Generator
 from typing import Any
 import requests
+import os
+import urllib3
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
+
+# 禁用 SSL 警告(如果配置了禁用 SSL 验证)
+DISABLE_SSL_VERIFY = os.getenv('DISABLE_SSL_VERIFY', 'false').lower() == 'true'
+if DISABLE_SSL_VERIFY:
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class GetParseResultTool(Tool):
     """
@@ -51,7 +58,7 @@ class GetParseResultTool(Tool):
                 # Request image information to be included in the response
                 params['upload_images'] = 'true'
 
-            response = requests.get(status_url, params=params, headers=headers, timeout=30)
+            response = requests.get(status_url, params=params, headers=headers, timeout=30, verify=not DISABLE_SSL_VERIFY)
             response.raise_for_status()
             result = response.json()
 
