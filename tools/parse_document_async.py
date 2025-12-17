@@ -45,20 +45,40 @@ class ParseDocumentAsyncTool(Tool):
             # Get file content
             file_name = file.filename or 'document.pdf'
 
-            # Try to get file content, handling the case where blob property might fail
-            try:
-                file_content = file.blob
-            except ValueError as e:
-                # If blob fails due to missing FILES_URL, file should already have _blob set
-                if hasattr(file, '_blob') and file._blob:
-                    file_content = file._blob
-                else:
+            # Try to get file content using URL-based download to control SSL verification
+            file_content = None
+
+            # Check if file has a URL we can download from
+            if hasattr(file, 'url') and file.url:
+                try:
+                    download_response = requests.get(
+                        file.url,
+                        timeout=60,
+                        verify=not DISABLE_SSL_VERIFY
+                    )
+                    download_response.raise_for_status()
+                    file_content = download_response.content
+                except Exception as download_error:
+                    # Silently try fallback method
+                    pass
+
+            # Fallback: try blob property if URL download failed
+            if not file_content:
+                try:
+                    file_content = file.blob
+                except Exception as e:
                     yield self.create_text_message(
                         f"❌ Error: Unable to access file content. "
-                        f"This usually means the Dify server needs to configure the FILES_URL environment variable. "
+                        f"This usually means SSL certificate verification failed or FILES_URL is not configured. "
                         f"Error details: {str(e)}"
                     )
                     return
+
+            if not file_content:
+                yield self.create_text_message(
+                    f"❌ Error: Could not obtain file content through any method"
+                )
+                return
 
             # Prepare form data
             files = {
