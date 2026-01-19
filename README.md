@@ -23,7 +23,11 @@
 
 ## Overview
 
-MinerU Tianshu is a powerful Dify plugin that enables high-quality document parsing capabilities through MinerU's enterprise-level infrastructure. Convert PDFs, images, and Office documents into structured Markdown format with support for:
+MinerU Tianshu is a powerful Dify plugin that enables high-quality document parsing capabilities through MinerU's enterprise-level infrastructure.
+
+**📌 Prerequisites**: This plugin requires the [MinerU Tianshu API Server](https://github.com/magicyuan876/mineru-tianshu) to be deployed first. Please deploy the upstream project before installing this plugin.
+
+Convert PDFs, images, and Office documents into structured Markdown format with support for:
 
 - 📄 **Multi-format Support**: PDF, images (PNG, JPG), Office files (Word, Excel, PowerPoint)
 - 🔢 **Formula Recognition**: Extract mathematical formulas in LaTeX format
@@ -64,8 +68,16 @@ This plugin provides **3 tools** for flexible document processing workflows:
 ### Prerequisites
 
 - Dify instance (self-hosted or cloud)
-- MinerU Tianshu API Server (required)
+- **MinerU Tianshu API Server (required)** - You must deploy the upstream project first
 - Python 3.11+ (for plugin runtime)
+
+### ⚠️ Important: Deploy API Server First
+
+**This plugin requires the MinerU Tianshu API Server to be deployed and running.** The API server is provided by the upstream project:
+
+**Upstream Project**: [https://github.com/magicyuan876/mineru-tianshu](https://github.com/magicyuan876/mineru-tianshu)
+
+**You MUST deploy this project before using this plugin**, as it provides all the backend API services for document parsing. Please follow the deployment instructions in the upstream project repository.
 
 ### ⚠️ Important: Dify Server Configuration
 
@@ -188,28 +200,32 @@ Create an agent that:
 
 ## API Server Setup
 
-If you don't have a MinerU Tianshu server, you can deploy one:
+**IMPORTANT**: This plugin requires the MinerU Tianshu API Server from the upstream project:
 
-### Using Docker
+**🔗 Upstream Project**: [https://github.com/magicyuan876/mineru-tianshu](https://github.com/magicyuan876/mineru-tianshu)
 
-```bash
-docker run -d \
-  --name mineru-tianshu \
-  --gpus all \
-  -p 8100:8000 \
-  -e API_PORT=8000 \
-  your-registry/mineru-tianshu:latest
-```
+### Deployment Steps
 
-### From Source
+1. **Clone the upstream project**:
+   ```bash
+   git clone https://github.com/magicyuan876/mineru-tianshu.git
+   cd mineru-tianshu
+   ```
 
-```bash
-cd MinerU/projects/mineru_tianshu
-pip install -r requirements.txt
-python api_server.py
-```
+2. **Follow the deployment instructions** in the upstream project's README:
+   - Docker deployment (recommended)
+   - Source code deployment
+   - Configuration and setup
 
-See the [MinerU Tianshu Documentation](https://github.com/opendatalab/MinerU) for more details.
+3. **Verify the API server is running**:
+   - Default port: `8100` (or as configured)
+   - Test endpoint: `http://your-server:8100/health` (if available)
+
+4. **Use the API server URL** when configuring this plugin in Dify:
+   - Example: `http://localhost:8100`
+   - Example: `http://your-server-ip:8100`
+
+For detailed deployment instructions, configuration options, and troubleshooting, please refer to the [upstream project documentation](https://github.com/magicyuan876/mineru-tianshu).
 
 ## Troubleshooting
 
@@ -330,6 +346,7 @@ We strive to respond to all support requests within 48 hours.
 
 ## Acknowledgments
 
+- [MinerU Tianshu API Server](https://github.com/magicyuan876/mineru-tianshu) - The upstream project providing the document parsing API
 - [MinerU](https://github.com/opendatalab/MinerU) - Powerful document extraction toolkit
 - [Dify](https://dify.ai) - LLM application development platform
 

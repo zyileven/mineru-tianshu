@@ -1,13 +1,9 @@
 from collections.abc import Generator
 from typing import Any
 import requests
-import urllib3
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
-
-# 禁用 SSL 警告
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class GetParseResultTool(Tool):
     """
@@ -24,6 +20,9 @@ class GetParseResultTool(Tool):
 
         # Get optional API key from credentials
         api_key = self.runtime.credentials.get('api_key', '')
+
+        # Get SSL verification setting
+        verify_ssl = self.runtime.credentials.get('verify_ssl', True)
 
         # Get parameters
         task_id = tool_parameters.get('task_id')
@@ -46,7 +45,7 @@ class GetParseResultTool(Tool):
             # Prepare headers with optional API key
             headers = {}
             if api_key:
-                headers['Authorization'] = f'Bearer {api_key}'
+                headers['X-API-Key'] = api_key
 
             # Query task status and result
             status_url = f"{api_server_url}/api/v1/tasks/{task_id}"
@@ -55,7 +54,7 @@ class GetParseResultTool(Tool):
                 # Request image information to be included in the response
                 params['upload_images'] = 'true'
 
-            response = requests.get(status_url, params=params, headers=headers, timeout=30, verify=False)
+            response = requests.get(status_url, params=params, headers=headers, timeout=30, verify=verify_ssl)
             response.raise_for_status()
             result = response.json()
 
@@ -74,6 +73,35 @@ class GetParseResultTool(Tool):
 
             # Display status
             yield self.create_text_message(f"📋 **Task Status:** {task_status}")
+
+            # Display parent task progress if applicable
+            if result.get('is_parent'):
+                subtask_progress = result.get('subtask_progress', {})
+                total = subtask_progress.get('total', 0)
+                completed = subtask_progress.get('completed', 0)
+                percentage = subtask_progress.get('percentage', 0)
+
+                yield self.create_text_message(
+                    f"📦 **Large Document:** {total} parts\n"
+                    f"⏳ **Progress:** {completed}/{total} ({percentage:.1f}%)"
+                )
+
+                # Show subtask details
+                subtasks = result.get('subtasks', [])
+                if subtasks:
+                    status_counts = {}
+                    for st in subtasks:
+                        status = st.get('status', 'unknown')
+                        status_counts[status] = status_counts.get(status, 0) + 1
+
+                    yield self.create_text_message(
+                        f"📊 **Parts Status:** "
+                        f"Pending: {status_counts.get('pending', 0)} | "
+                        f"Processing: {status_counts.get('processing', 0)} | "
+                        f"Completed: {status_counts.get('completed', 0)} | "
+                        f"Failed: {status_counts.get('failed', 0)}"
+                    )
+
             yield self.create_text_message(f"📄 **File:** {file_name}")
             yield self.create_text_message(f"⚙️ **Backend:** {backend}")
 

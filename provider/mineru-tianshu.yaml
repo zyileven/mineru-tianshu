@@ -36,22 +36,36 @@ credentials_schema:
       ja_JP: "API サーバー URL"
   - name: "api_key"
     type: "secret-input"
-    required: false
+    required: true
     placeholder:
-      en_US: "Enter your API Key (optional)"
-      zh_Hans: "输入您的 API Key（可选）"
-      pt_BR: "Digite sua chave de API (opcional)"
-      ja_JP: "APIキーを入力（オプション）"
+      en_US: "Enter your API Key "
+      zh_Hans: "输入您的 API Key"
+      pt_BR: "Digite sua chave de API"
+      ja_JP: "APIキーを入力"
     help:
-      en_US: "API Key for authentication (leave empty if not required)"
-      zh_Hans: "用于认证的 API 密钥（如不需要可留空）"
-      pt_BR: "Chave de API para autenticação (deixe em branco se não for necessário)"
-      ja_JP: "認証用のAPIキー（不要な場合は空欄）"
+      en_US: "API Key for authentication"
+      zh_Hans: "用于认证的 API 密钥"
+      pt_BR: "Chave de API para autenticação"
+      ja_JP: "認証用のAPIキー"
     label:
       en_US: "API Key"
       zh_Hans: "API 密钥"
       pt_BR: "Chave de API"
       ja_JP: "APIキー"
+  - name: "verify_ssl"
+    type: "boolean"
+    required: false
+    default: true
+    label:
+      en_US: "Verify SSL Certificate"
+      zh_Hans: "验证 SSL 证书"
+      pt_BR: "Verificar Certificado SSL"
+      ja_JP: "SSL証明書を検証"
+    help:
+      en_US: "Enable SSL certificate verification for HTTPS connections (recommended: true). Disable only for self-signed certificates in development."
+      zh_Hans: "启用 HTTPS 连接的 SSL 证书验证（推荐：开启）。仅在开发环境使用自签名证书时禁用。"
+      pt_BR: "Ativar verificação de certificado SSL para conexões HTTPS (recomendado: ativado). Desative apenas para certificados autoassinados em desenvolvimento."
+      ja_JP: "HTTPS接続のSSL証明書検証を有効化（推奨：有効）。開発環境で自己署名証明書を使用する場合のみ無効化してください。"
 
 tools:
   - tools/parse_document.yaml

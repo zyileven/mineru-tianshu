@@ -2,13 +2,9 @@ from collections.abc import Generator
 from typing import Any
 import requests
 from io import BytesIO
-import urllib3
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
-
-# 禁用 SSL 警告
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class ParseDocumentAsyncTool(Tool):
     """
@@ -26,10 +22,14 @@ class ParseDocumentAsyncTool(Tool):
         # Get optional API key from credentials
         api_key = self.runtime.credentials.get('api_key', '')
 
+        # Get SSL verification setting
+        verify_ssl = self.runtime.credentials.get('verify_ssl', True)
+
         # Get parameters
         file = tool_parameters.get('file')
-        backend = tool_parameters.get('backend', 'pipeline')
-        lang = tool_parameters.get('lang', 'ch')
+        backend = tool_parameters.get('backend', 'auto')
+        lang = tool_parameters.get('lang', 'auto')
+        method = tool_parameters.get('method', 'auto')
         formula_enable = tool_parameters.get('formula_enable', True)
         table_enable = tool_parameters.get('table_enable', True)
         priority = tool_parameters.get('priority', 0)
@@ -40,7 +40,10 @@ class ParseDocumentAsyncTool(Tool):
 
         try:
             # Get file content
-            file_name = file.filename or 'document.pdf'
+            file_name = file.filename
+            if not file_name:
+                yield self.create_text_message("❌ Error: File object exists but filename is missing")
+                return
 
             # Try to get file content using URL-based download to control SSL verification
             file_content = None
@@ -51,7 +54,7 @@ class ParseDocumentAsyncTool(Tool):
                     download_response = requests.get(
                         file.url,
                         timeout=60,
-                        verify=False
+                        verify=verify_ssl
                     )
                     download_response.raise_for_status()
                     file_content = download_response.content
@@ -84,20 +87,54 @@ class ParseDocumentAsyncTool(Tool):
             data = {
                 'backend': backend,
                 'lang': lang,
-                'method': 'auto',
+                'method': method,
                 'formula_enable': str(formula_enable).lower(),
                 'table_enable': str(table_enable).lower(),
                 'priority': str(priority)
             }
 
+            # Add video-specific parameters if backend is video
+            if backend == 'video':
+                enable_keyframe_ocr = tool_parameters.get('enable_keyframe_ocr', False)
+                keep_audio = tool_parameters.get('keep_audio', False)
+                ocr_backend = tool_parameters.get('ocr_backend', 'paddleocr-vl')
+                keep_keyframes = tool_parameters.get('keep_keyframes', False)
+                data.update({
+                    'enable_keyframe_ocr': str(enable_keyframe_ocr).lower(),
+                    'keep_audio': str(keep_audio).lower(),
+                    'ocr_backend': ocr_backend,
+                    'keep_keyframes': str(keep_keyframes).lower(),
+                })
+
+            # Add audio-specific parameters if backend is sensevoice
+            if backend == 'sensevoice':
+                enable_speaker_diarization = tool_parameters.get('enable_speaker_diarization', False)
+                data['enable_speaker_diarization'] = str(enable_speaker_diarization).lower()
+
+            # Add watermark removal parameters
+            remove_watermark = tool_parameters.get('remove_watermark', False)
+            if remove_watermark:
+                watermark_conf_threshold = tool_parameters.get('watermark_conf_threshold', 0.35)
+                watermark_dilation = tool_parameters.get('watermark_dilation', 10)
+                data.update({
+                    'remove_watermark': str(remove_watermark).lower(),
+                    'watermark_conf_threshold': str(watermark_conf_threshold),
+                    'watermark_dilation': str(watermark_dilation),
+                })
+
+            # Add convert_office_to_pdf parameter
+            convert_office_to_pdf = tool_parameters.get('convert_office_to_pdf', False)
+            if convert_office_to_pdf:
+                data['convert_office_to_pdf'] = str(convert_office_to_pdf).lower()
+
             # Prepare headers with optional API key
             headers = {}
             if api_key:
-                headers['Authorization'] = f'Bearer {api_key}'
+                headers['X-API-Key'] = api_key
 
             # Submit the task
             submit_url = f"{api_server_url}/api/v1/tasks/submit"
-            response = requests.post(submit_url, files=files, data=data, headers=headers, timeout=60, verify=False)
+            response = requests.post(submit_url, files=files, data=data, headers=headers, timeout=60, verify=verify_ssl)
             response.raise_for_status()
             result = response.json()
 

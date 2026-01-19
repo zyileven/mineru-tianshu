@@ -32,14 +32,38 @@ parameters:
   - name: backend
     type: select
     required: false
-    default: "pipeline"
+    default: "auto"
     options:
+      - value: "auto"
+        label:
+          en_US: "Auto (Recommended)"
+          zh_Hans: "自动选择（推荐）"
+          pt_BR: "Automático (Recomendado)"
+          ja_JP: "自動選択（推奨）"
       - value: "pipeline"
         label:
-          en_US: "Pipeline (Recommended)"
-          zh_Hans: "Pipeline（推荐）"
-          pt_BR: "Pipeline (Recomendado)"
-          ja_JP: "Pipeline（推奨）"
+          en_US: "Pipeline (MinerU - Recommended)"
+          zh_Hans: "Pipeline（MinerU - 推荐）"
+          pt_BR: "Pipeline (MinerU - Recomendado)"
+          ja_JP: "Pipeline（MinerU - 推奨）"
+      - value: "paddleocr-vl"
+        label:
+          en_US: "PaddleOCR-VL (109+ Languages OCR)"
+          zh_Hans: "PaddleOCR-VL（109+语言OCR）"
+          pt_BR: "PaddleOCR-VL (OCR 109+ Idiomas)"
+          ja_JP: "PaddleOCR-VL（109+言語OCR）"
+      - value: "sensevoice"
+        label:
+          en_US: "SenseVoice (Audio Recognition)"
+          zh_Hans: "SenseVoice（语音识别）"
+          pt_BR: "SenseVoice (Reconhecimento de Áudio)"
+          ja_JP: "SenseVoice（音声認識）"
+      - value: "video"
+        label:
+          en_US: "Video Processing"
+          zh_Hans: "视频处理"
+          pt_BR: "Processamento de Vídeo"
+          ja_JP: "ビデオ処理"
       - value: "vlm-transformers"
         label:
           en_US: "VLM Transformers"
@@ -67,8 +91,14 @@ parameters:
   - name: lang
     type: select
     required: false
-    default: "ch"
+    default: "auto"
     options:
+      - value: "auto"
+        label:
+          en_US: "Auto Detect"
+          zh_Hans: "自动检测"
+          pt_BR: "Detecção Automática"
+          ja_JP: "自動検出"
       - value: "ch"
         label:
           en_US: "Chinese"
@@ -99,11 +129,11 @@ parameters:
       pt_BR: Idioma
       ja_JP: 言語
     human_description:
-      en_US: "Document language"
-      zh_Hans: "文档语言"
-      pt_BR: "Idioma do documento"
-      ja_JP: "ドキュメントの言語"
-    llm_description: "Primary language of the document"
+      en_US: "Document language (auto-detect or specify)"
+      zh_Hans: "文档语言（自动检测或指定）"
+      pt_BR: "Idioma do documento (detectar automaticamente ou especificar)"
+      ja_JP: "ドキュメントの言語（自動検出または指定）"
+    llm_description: "Primary language of the document (auto-detect recommended)"
     form: form
   - name: formula_enable
     type: boolean
@@ -152,6 +182,192 @@ parameters:
       pt_BR: "Tempo máximo para aguardar a conclusão do processamento (padrão: 300 segundos)"
       ja_JP: "処理完了を待つ最大時間（デフォルト：300秒）"
     llm_description: "Maximum time in seconds to wait for document processing to complete"
+    form: form
+  - name: enable_keyframe_ocr
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Enable Keyframe OCR (Video Only)
+      zh_Hans: 启用关键帧OCR（仅视频）
+      pt_BR: Ativar OCR de Quadro-Chave (Apenas Vídeo)
+      ja_JP: キーフレームOCRを有効化（ビデオのみ）
+    human_description:
+      en_US: "Enable OCR on extracted keyframes from video (only effective when backend is 'video')"
+      zh_Hans: "对视频提取的关键帧启用OCR识别（仅当后端为'video'时有效）"
+      pt_BR: "Ativar OCR em quadros-chave extraídos do vídeo (efetivo apenas quando backend é 'video')"
+      ja_JP: "ビデオから抽出されたキーフレームでOCRを有効にする（バックエンドが'video'の場合のみ有効）"
+    llm_description: "Whether to enable OCR on video keyframes (only for video backend)"
+    form: form
+  - name: keep_audio
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Keep Audio File (Video Only)
+      zh_Hans: 保留音频文件（仅视频）
+      pt_BR: Manter Arquivo de Áudio (Apenas Vídeo)
+      ja_JP: 音声ファイルを保持（ビデオのみ）
+    human_description:
+      en_US: "Keep the extracted audio file after processing (only effective when backend is 'video')"
+      zh_Hans: "处理后保留提取的音频文件（仅当后端为'video'时有效）"
+      pt_BR: "Manter o arquivo de áudio extraído após o processamento (efetivo apenas quando backend é 'video')"
+      ja_JP: "処理後に抽出された音声ファイルを保持する（バックエンドが'video'の場合のみ有効）"
+    llm_description: "Whether to keep the extracted audio file (only for video backend)"
+    form: form
+  - name: enable_speaker_diarization
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Enable Speaker Diarization (Audio Only)
+      zh_Hans: 启用说话人分离（仅音频）
+      pt_BR: Ativar Diarização de Locutor (Apenas Áudio)
+      ja_JP: 話者分離を有効化（音声のみ）
+    human_description:
+      en_US: "Enable speaker diarization for audio/video files (effective when backend is 'sensevoice' or 'video')"
+      zh_Hans: "为音频/视频文件启用说话人分离（仅当后端为'sensevoice'或'video'时有效）"
+      pt_BR: "Ativar diarização de locutor para arquivos de áudio/vídeo (efetivo quando backend é 'sensevoice' ou 'video')"
+      ja_JP: "音声/ビデオファイルの話者分離を有効にする（バックエンドが'sensevoice'または'video'の場合のみ有効）"
+    llm_description: "Whether to enable speaker diarization (only for sensevoice and video backends)"
+    form: form
+  - name: method
+    type: select
+    required: false
+    default: "auto"
+    options:
+      - value: "auto"
+        label:
+          en_US: "Auto"
+          zh_Hans: "自动"
+          pt_BR: "Automático"
+          ja_JP: "自動"
+      - value: "txt"
+        label:
+          en_US: "Text"
+          zh_Hans: "文本"
+          pt_BR: "Texto"
+          ja_JP: "テキスト"
+      - value: "ocr"
+        label:
+          en_US: "OCR"
+          zh_Hans: "OCR"
+          pt_BR: "OCR"
+          ja_JP: "OCR"
+    label:
+      en_US: Parse Method
+      zh_Hans: 解析方法
+      pt_BR: Método de Análise
+      ja_JP: 解析方法
+    human_description:
+      en_US: "Method to parse the document: auto (automatic), txt (text extraction), or ocr (optical character recognition)"
+      zh_Hans: "文档解析方法：auto（自动）、txt（文本提取）或 ocr（光学字符识别）"
+      pt_BR: "Método para analisar o documento: auto (automático), txt (extração de texto) ou ocr (reconhecimento óptico de caracteres)"
+      ja_JP: "ドキュメントを解析する方法：auto（自動）、txt（テキスト抽出）、またはocr（光学文字認識）"
+    llm_description: "Document parsing method: auto, txt, or ocr"
+    form: form
+  - name: ocr_backend
+    type: select
+    required: false
+    default: "paddleocr-vl"
+    options:
+      - value: "paddleocr-vl"
+        label:
+          en_US: "PaddleOCR-VL"
+          zh_Hans: "PaddleOCR-VL"
+          pt_BR: "PaddleOCR-VL"
+          ja_JP: "PaddleOCR-VL"
+    label:
+      en_US: Keyframe OCR Backend (Video Only)
+      zh_Hans: 关键帧OCR引擎（仅视频）
+      pt_BR: Backend OCR de Quadro-Chave (Apenas Vídeo)
+      ja_JP: キーフレームOCRバックエンド（ビデオのみ）
+    human_description:
+      en_US: "OCR engine to use for video keyframe recognition (only effective when enable_keyframe_ocr is true)"
+      zh_Hans: "用于视频关键帧识别的OCR引擎（仅当启用关键帧OCR时有效）"
+      pt_BR: "Motor OCR a ser usado para reconhecimento de quadros-chave de vídeo (efetivo apenas quando enable_keyframe_ocr é verdadeiro)"
+      ja_JP: "ビデオキーフレーム認識に使用するOCRエンジン（enable_keyframe_ocrがtrueの場合のみ有効）"
+    llm_description: "OCR engine for video keyframe processing"
+    form: form
+  - name: keep_keyframes
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Keep Keyframes (Video Only)
+      zh_Hans: 保留关键帧（仅视频）
+      pt_BR: Manter Quadros-Chave (Apenas Vídeo)
+      ja_JP: キーフレームを保持（ビデオのみ）
+    human_description:
+      en_US: "Keep the extracted keyframe images after processing (only effective when backend is 'video')"
+      zh_Hans: "处理后保留提取的关键帧图像（仅当后端为'video'时有效）"
+      pt_BR: "Manter as imagens de quadros-chave extraídas após o processamento (efetivo apenas quando backend é 'video')"
+      ja_JP: "処理後に抽出されたキーフレーム画像を保持する（バックエンドが'video'の場合のみ有効）"
+    llm_description: "Whether to keep extracted keyframe images (only for video backend)"
+    form: form
+  - name: remove_watermark
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Remove Watermark
+      zh_Hans: 去除水印
+      pt_BR: Remover Marca D'água
+      ja_JP: 透かしを削除
+    human_description:
+      en_US: "Enable watermark removal for PDF and images (experimental feature)"
+      zh_Hans: "启用PDF和图片的水印去除功能（实验性功能）"
+      pt_BR: "Ativar remoção de marca d'água para PDF e imagens (recurso experimental)"
+      ja_JP: "PDFと画像の透かし除去を有効にする（実験的機能）"
+    llm_description: "Whether to enable watermark removal for PDF/images"
+    form: form
+  - name: watermark_conf_threshold
+    type: number
+    required: false
+    default: 0.35
+    label:
+      en_US: Watermark Detection Threshold
+      zh_Hans: 水印检测阈值
+      pt_BR: Limite de Detecção de Marca D'água
+      ja_JP: 透かし検出しきい値
+    human_description:
+      en_US: "Confidence threshold for watermark detection (0.0-1.0, recommended: 0.35)"
+      zh_Hans: "水印检测的置信度阈值（0.0-1.0，推荐：0.35）"
+      pt_BR: "Limite de confiança para detecção de marca d'água (0.0-1.0, recomendado: 0.35)"
+      ja_JP: "透かし検出の信頼しきい値（0.0-1.0、推奨：0.35）"
+    llm_description: "Confidence threshold for watermark detection (0.0-1.0)"
+    form: form
+  - name: watermark_dilation
+    type: number
+    required: false
+    default: 10
+    label:
+      en_US: Watermark Mask Dilation
+      zh_Hans: 水印掩码膨胀大小
+      pt_BR: Dilatação da Máscara de Marca D'água
+      ja_JP: 透かしマスク膨張
+    human_description:
+      en_US: "Dilation size for watermark mask in pixels (recommended: 10)"
+      zh_Hans: "水印掩码膨胀大小（像素，推荐：10）"
+      pt_BR: "Tamanho de dilatação para máscara de marca d'água em pixels (recomendado: 10)"
+      ja_JP: "透かしマスクの膨張サイズ（ピクセル、推奨：10）"
+    llm_description: "Dilation size for watermark mask in pixels"
+    form: form
+  - name: convert_office_to_pdf
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Convert Office to PDF First
+      zh_Hans: 先转换 Office 为 PDF
+      pt_BR: Converter Office para PDF Primeiro
+      ja_JP: 最初に Office を PDF に変換
+    human_description:
+      en_US: "Convert Office files to PDF before processing for better image extraction (slower but more complete)"
+      zh_Hans: "先将 Office 文件转换为 PDF 再处理，以获得更好的图片提取效果（速度较慢但更完整）"
+      pt_BR: "Converter arquivos do Office para PDF antes do processamento para melhor extração de imagens (mais lento, mas mais completo)"
+      ja_JP: "処理前に Office ファイルを PDF に変換して、より良い画像抽出を行う（遅いがより完全）"
+    llm_description: "Whether to convert Office files to PDF before processing for better image extraction"
     form: form
 extra:
   python:
