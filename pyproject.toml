@@ -1,3 +1,24 @@
+[project]
+name = "mineru-tianshu"
+version = "0.2.0"
+description = "Enterprise-level multi-GPU document parsing service powered by MinerU"
+authors = [
+    {name = "zyileven"}
+]
+license = {text = "Apache-2.0"}
+requires-python = ">=3.12"
+dependencies = [
+    "dify_plugin>=0.4.0,<0.7.0",
+    "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.1",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
