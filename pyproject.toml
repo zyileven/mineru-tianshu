@@ -1,6 +1,6 @@
 [project]
 name = "mineru-tianshu"
-version = "0.2.0"
+version = "0.2.1"
 description = "Enterprise-level multi-GPU document parsing service powered by MinerU"
 authors = [
     {name = "zyileven"}

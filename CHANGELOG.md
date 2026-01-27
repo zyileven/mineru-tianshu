@@ -2,6 +2,31 @@
 
 本项目的所有重要变更都将记录在此文件中。
 
+## [0.2.1] - 2026-01-27
+
+### 修复
+- **Backend 参数同步**：修复了插件 backend 参数与 MinerU-tianshu API 不匹配的问题
+  - 移除了无效的 `vlm-transformers` 和 `vlm-vllm-engine` 选项（API 不支持）
+  - 新增了 `paddleocr-vl-vllm`（高性能 PaddleOCR 版本）
+  - 新增了 `fasta`（生物序列格式）和 `genbank`（基因序列格式）支持
+  - 更新了 backend 参数的完整描述，涵盖所有支持的引擎类型
+
+### 新增
+- **Priority 参数**：为同步版本工具（`parse_document`）添加了 `priority` 参数
+  - 允许用户设置任务优先级（数字越大优先级越高）
+  - 与异步版本保持一致
+
+### 变更
+- **参数描述优化**：更新了所有 backend 选项的 `llm_description`，提供更清晰的引擎说明
+  - 明确了 auto 模式会根据文件类型自动选择最佳引擎
+  - 为每个引擎添加了适用场景说明（PDF/images、OCR、audio、video、biological sequences）
+
+### 向后兼容性
+- ✅ 现有工作流程不受影响，所有参数保持可选
+- ✅ 默认值保持不变（backend=auto, priority=0）
+
+---
+
 ## [0.1.1] - 2026-01-19
 
 ### 变更
