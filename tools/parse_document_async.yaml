@@ -52,6 +52,12 @@ parameters:
           zh_Hans: "PaddleOCR-VL（109+语言OCR）"
           pt_BR: "PaddleOCR-VL (OCR 109+ Idiomas)"
           ja_JP: "PaddleOCR-VL（109+言語OCR）"
+      - value: "paddleocr-vl-vllm"
+        label:
+          en_US: "PaddleOCR-VL-VLLM (High Performance)"
+          zh_Hans: "PaddleOCR-VL-VLLM（高性能）"
+          pt_BR: "PaddleOCR-VL-VLLM (Alto Desempenho)"
+          ja_JP: "PaddleOCR-VL-VLLM（高性能）"
       - value: "sensevoice"
         label:
           en_US: "SenseVoice (Audio Recognition)"
@@ -64,29 +70,29 @@ parameters:
           zh_Hans: "视频处理"
           pt_BR: "Processamento de Vídeo"
           ja_JP: "ビデオ処理"
-      - value: "vlm-transformers"
+      - value: "fasta"
         label:
-          en_US: "VLM Transformers"
-          zh_Hans: "VLM Transformers"
-          pt_BR: "VLM Transformers"
-          ja_JP: "VLM Transformers"
-      - value: "vlm-vllm-engine"
+          en_US: "FASTA (Biological Sequences)"
+          zh_Hans: "FASTA（生物序列）"
+          pt_BR: "FASTA (Sequências Biológicas)"
+          ja_JP: "FASTA（生物学的配列）"
+      - value: "genbank"
         label:
-          en_US: "VLM vLLM Engine"
-          zh_Hans: "VLM vLLM 引擎"
-          pt_BR: "VLM vLLM Engine"
-          ja_JP: "VLM vLLM エンジン"
+          en_US: "GenBank (Gene Sequences)"
+          zh_Hans: "GenBank（基因序列）"
+          pt_BR: "GenBank (Sequências Genéticas)"
+          ja_JP: "GenBank（遺伝子配列）"
     label:
       en_US: Processing Backend
       zh_Hans: 处理后端
       pt_BR: Backend de Processamento
       ja_JP: 処理バックエンド
     human_description:
-      en_US: "Choose the processing backend"
-      zh_Hans: "选择处理后端"
-      pt_BR: "Escolha o backend de processamento"
-      ja_JP: "処理バックエンドを選択"
-    llm_description: "Processing backend: pipeline (recommended), vlm-transformers, or vlm-vllm-engine"
+      en_US: "Choose the processing backend. Auto mode will automatically select the best backend based on file type."
+      zh_Hans: "选择处理后端。自动模式将根据文件类型自动选择最佳后端。"
+      pt_BR: "Escolha o backend de processamento. O modo automático selecionará automaticamente o melhor backend com base no tipo de arquivo."
+      ja_JP: "処理バックエンドを選択します。自動モードはファイルタイプに基づいて最適なバックエンドを自動選択します。"
+    llm_description: "Processing backend: auto (auto-select based on file type), pipeline (PDF/images), paddleocr-vl/paddleocr-vl-vllm (OCR), sensevoice (audio), video (video processing), fasta/genbank (biological sequences)"
     form: form
   - name: lang
     type: select
