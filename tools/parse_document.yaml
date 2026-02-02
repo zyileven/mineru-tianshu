@@ -137,22 +137,6 @@ parameters:
       ja_JP: "表構造認識を有効にする"
     llm_description: "Whether to enable table structure recognition"
     form: form
-  - name: max_wait_time
-    type: number
-    required: false
-    default: 300
-    label:
-      en_US: Max Wait Time (seconds)
-      zh_Hans: 最大等待时间（秒）
-      pt_BR: Tempo Máximo de Espera (segundos)
-      ja_JP: 最大待機時間（秒）
-    human_description:
-      en_US: "Maximum time to wait for processing to complete (default: 300 seconds)"
-      zh_Hans: "等待处理完成的最大时间（默认：300 秒）"
-      pt_BR: "Tempo máximo para aguardar a conclusão do processamento (padrão: 300 segundos)"
-      ja_JP: "処理完了を待つ最大時間（デフォルト：300秒）"
-    llm_description: "Maximum time in seconds to wait for document processing to complete"
-    form: form
 extra:
   python:
     source: tools/parse_document.py

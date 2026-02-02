@@ -42,7 +42,7 @@ MinerU 天枢是一个强大的 Dify 插件,通过 MinerU 的企业级基础设�
 - 提交文档并等待完成
 - 直接返回解析后的 Markdown 内容
 - 适合交互式工作流
-- 可配置超时时间(默认: 300 秒)
+- 持续等待直到处理完成(无超时限制)
 
 ### 2. 解析文档(异步)
 **`parse_document_async`** - 提交后继续工作流
@@ -125,7 +125,6 @@ Error: Invalid file URL '/files/...': Request URL is missing an 'http://' or 'ht
   - lang: ch
   - formula_enable: true
   - table_enable: true
-  - max_wait_time: 300
 
 输出:
   {{markdown_content}}
@@ -221,13 +220,14 @@ python api_server.py
 **错误**: "Network error: Connection refused"
 - **解决方案**: 检查 MinerU 天枢服务器是否正在运行且可访问
 
-### 超时问题
+### 处理时间过长
 
-**错误**: "Timeout: Processing exceeded 300 seconds"
+**现象**: 文档处理时间很长
+- **原因**: 大文件、复杂布局或服务器资源有限
 - **解决方案**:
-  - 增加 `max_wait_time` 参数
-  - 对于大文档使用 `parse_document_async` + `get_parse_result`
-  - 检查服务器 GPU 可用性
+  - 如果不想等待,使用 `parse_document_async` + `get_parse_result`
+  - 检查服务器 GPU 可用性和资源使用情况
+  - 对于紧急任务可以设置更高的优先级值
 
 ### 找不到结果
 

@@ -19,8 +19,7 @@ class TestParseDocumentTool:
             'backend': 'pipeline',
             'lang': 'ch',
             'formula_enable': True,
-            'table_enable': True,
-            'max_wait_time': 300
+            'table_enable': True
         }
 
         with patch('tools.parse_document.requests.post') as mock_post, \
@@ -86,44 +85,6 @@ class TestParseDocumentTool:
         # Should return error message
         assert len(messages) > 0
         assert any('No file provided' in str(msg) for msg in messages)
-
-    def test_task_timeout(self, mock_runtime, mock_file):
-        """Test timeout when task takes too long"""
-        tool = ParseDocumentTool()
-        tool.runtime = mock_runtime
-
-        tool_parameters = {
-            'file': mock_file,
-            'max_wait_time': 1  # 1 second timeout
-        }
-
-        with patch('tools.parse_document.requests.post') as mock_post, \
-             patch('tools.parse_document.requests.get') as mock_get, \
-             patch('tools.parse_document.time.sleep'):
-
-            # Mock submit response
-            mock_submit_response = Mock()
-            mock_submit_response.json.return_value = {
-                'success': True,
-                'task_id': 'test-task-id-12345'
-            }
-            mock_submit_response.raise_for_status = Mock()
-            mock_post.return_value = mock_submit_response
-
-            # Mock status check response (always processing)
-            mock_status_response = Mock()
-            mock_status_response.json.return_value = {
-                'success': True,
-                'status': 'processing',
-                'task_id': 'test-task-id-12345'
-            }
-            mock_status_response.raise_for_status = Mock()
-            mock_get.return_value = mock_status_response
-
-            messages = list(tool._invoke(tool_parameters))
-
-            # Should return timeout message
-            assert any('timeout' in str(msg).lower() or 'exceeded' in str(msg).lower() for msg in messages)
 
     def test_task_fails_during_processing(self, mock_runtime, mock_file):
         """Test when task fails during processing"""

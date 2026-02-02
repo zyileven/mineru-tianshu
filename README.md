@@ -42,7 +42,7 @@ This plugin provides **3 tools** for flexible document processing workflows:
 - Submit document and wait for completion
 - Returns parsed Markdown content directly
 - Ideal for interactive workflows
-- Configurable timeout (default: 300 seconds)
+- Waits until processing completes (no timeout)
 
 ### 2. Parse Document Async (Asynchronous)
 **`parse_document_async`** - Submit and continue workflow
@@ -125,7 +125,6 @@ Inputs:
   - lang: ch
   - formula_enable: true
   - table_enable: true
-  - max_wait_time: 300
 
 Output:
   {{markdown_content}}
@@ -221,13 +220,14 @@ See the [MinerU Tianshu Documentation](https://github.com/opendatalab/MinerU) fo
 **Error**: "Network error: Connection refused"
 - **Solution**: Check if the MinerU Tianshu server is running and accessible
 
-### Timeout Issues
+### Long Processing Times
 
-**Error**: "Timeout: Processing exceeded 300 seconds"
+**Symptom**: Document processing takes a long time
+- **Cause**: Large files, complex layouts, or limited server resources
 - **Solution**:
-  - Increase `max_wait_time` parameter
-  - Use `parse_document_async` + `get_parse_result` for large documents
-  - Check server GPU availability
+  - Use `parse_document_async` + `get_parse_result` if you don't want to wait
+  - Check server GPU availability and resource usage
+  - Consider using a higher priority value for urgent tasks
 
 ### Result Not Found
 

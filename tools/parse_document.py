@@ -34,16 +34,6 @@ class ParseDocumentTool(Tool):
         formula_enable = tool_parameters.get('formula_enable', True)
         table_enable = tool_parameters.get('table_enable', True)
 
-        # Convert and validate max_wait_time
-        try:
-            max_wait_time = int(tool_parameters.get('max_wait_time', 300))
-            if max_wait_time < 1 or max_wait_time > 3600:
-                yield self.create_text_message("Error: max_wait_time must be between 1 and 3600 seconds")
-                return
-        except (ValueError, TypeError):
-            yield self.create_text_message("Error: max_wait_time must be a valid number")
-            return
-
         if not file:
             yield self.create_text_message("Error: No file provided")
             return
@@ -135,12 +125,8 @@ class ParseDocumentTool(Tool):
             poll_interval = 5  # Poll every 5 seconds
 
             while True:
-                # Check timeout
+                # Track elapsed time for status updates
                 elapsed_time = time.time() - start_time
-                if elapsed_time > max_wait_time:
-                    yield self.create_text_message(f"⚠️ Timeout: Processing exceeded {max_wait_time} seconds. Task ID: {task_id}")
-                    yield self.create_text_message("You can use the 'get_parse_result' tool to check the status later.")
-                    return
 
                 # Query task status
                 status_response = requests.get(status_url, headers=headers, timeout=30, verify=False)
