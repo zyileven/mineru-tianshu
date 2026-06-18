@@ -48,3 +48,18 @@ parameters:
 extra:
   python:
     source: tools/get_parse_result.py
+output_schema:
+  text:
+    type: string
+    description:
+      en_US: "The parsed document content in Markdown format when completed (complete, not truncated); otherwise a short status note"
+      zh_Hans: "任务完成时为解析后的文档内容（Markdown 格式，完整不截断）；否则为简短状态说明"
+      pt_BR: "O conteúdo do documento em Markdown quando concluído (completo); caso contrário, uma nota de status"
+      ja_JP: "完了時は解析されたドキュメントの内容（Markdown 形式、完全）、それ以外は短いステータス"
+  json:
+    type: object
+    description:
+      en_US: "Structured result: markdown_content, task_id, status, file_name, backend, timestamps, optional images, and originData (raw API response)"
+      zh_Hans: "结构化结果：markdown_content、task_id、status、file_name、backend、时间戳、可选 images，以及 originData（原始 API 响应）"
+      pt_BR: "Resultado estruturado: markdown_content, task_id, status, file_name, backend, timestamps, images e originData"
+      ja_JP: "構造化された結果：markdown_content、task_id、status、file_name、backend、タイムスタンプ、images、originData"

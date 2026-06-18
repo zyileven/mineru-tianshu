@@ -50,7 +50,7 @@ class ParseDocumentTool(Tool):
 
         try:
             # Step 1: Submit the task
-            yield self.create_text_message(f"📤 Submitting document to MinerU Tianshu...")
+            yield self.create_log_message("Submitting document to MinerU Tianshu", {})
 
             # Get file content
             file_name = file.filename
@@ -64,7 +64,7 @@ class ParseDocumentTool(Tool):
             # Check if file has a URL we can download from
             if hasattr(file, 'url') and file.url:
                 try:
-                    yield self.create_text_message(f"📥 Downloading file from URL...")
+                    yield self.create_log_message("Downloading file from URL", {})
                     download_response = requests.get(
                         file.url,
                         timeout=60,
@@ -73,8 +73,9 @@ class ParseDocumentTool(Tool):
                     download_response.raise_for_status()
                     file_content = download_response.content
                 except Exception as download_error:
-                    yield self.create_text_message(
-                        f"⚠️ Failed to download from URL: {str(download_error)}"
+                    yield self.create_log_message(
+                        "Failed to download from URL, falling back to blob",
+                        {"error": str(download_error)},
                     )
 
             # Fallback: try blob property if URL download failed
@@ -162,10 +163,10 @@ class ParseDocumentTool(Tool):
                 yield self.create_text_message(f"❌ Error: API returned success but no task_id. Response: {result}")
                 return
 
-            yield self.create_text_message(f"✅ Task submitted successfully! Task ID: {task_id}")
+            yield self.create_log_message("Task submitted successfully", {"task_id": task_id})
 
             # Step 2: Poll for completion
-            yield self.create_text_message(f"⏳ Waiting for processing to complete...")
+            yield self.create_log_message("Waiting for processing to complete", {})
 
             status_url = f"{api_server_url}/api/v1/tasks/{task_id}"
             start_time = time.time()
@@ -200,9 +201,9 @@ class ParseDocumentTool(Tool):
                     completed = subtask_progress.get('completed', 0)
                     percentage = subtask_progress.get('percentage', 0)
 
-                    yield self.create_text_message(
-                        f"📦 Large document split into {total} parts\n"
-                        f"⏳ Progress: {completed}/{total} parts ({percentage:.1f}%)"
+                    yield self.create_log_message(
+                        "Large document split into parts",
+                        {"total": total, "completed": completed, "percentage": percentage},
                     )
 
                     # Check for failed subtasks
@@ -210,43 +211,42 @@ class ParseDocumentTool(Tool):
                     if subtasks:
                         failed = [st for st in subtasks if st.get('status') == 'failed']
                         if failed:
-                            yield self.create_text_message(
-                                f"⚠️ Warning: {len(failed)} part(s) failed"
+                            yield self.create_log_message(
+                                "Some parts failed", {"failed_count": len(failed)}
                             )
 
                 if task_status == 'completed':
-                    # Check if parent task
+                    # Progress goes to logs, not the text output
                     if status_result.get('is_parent'):
-                        subtask_progress = status_result.get('subtask_progress', {})
-                        total = subtask_progress.get('total', 0)
+                        total = status_result.get('subtask_progress', {}).get('total', 0)
+                        yield self.create_log_message("All parts merged successfully", {"total": total})
+                    else:
+                        yield self.create_log_message("Processing completed", {})
+
+                    data_field = status_result.get('data', {}) or {}
+                    markdown_content = data_field.get('content')
+
+                    if markdown_content:
+                        # text output = the full, clean Markdown content (no truncation)
+                        yield self.create_text_message(markdown_content)
+                    else:
                         yield self.create_text_message(
-                            f"✅ All {total} parts merged successfully!"
+                            "Task completed but no content found. The result files may have been cleaned up."
                         )
-                    else:
-                        yield self.create_text_message(f"✅ Processing completed!")
 
-                    # Get the markdown content with smart truncation
-                    data_field = status_result.get('data', {})
-                    if data_field and 'content' in data_field:
-                        markdown_content = data_field['content']
-
-                        # Truncate if content is too large (> 5000 characters)
-                        max_preview_length = 5000
-                        if len(markdown_content) > max_preview_length:
-                            truncated_content = markdown_content[:max_preview_length]
-                            yield self.create_text_message(
-                                f"\n📄 **Parsed Document (Preview - {max_preview_length} characters):**\n\n"
-                                f"{truncated_content}\n\n"
-                                f"... _(Content truncated. Total length: {len(markdown_content)} characters. "
-                                f"Full content is available in the JSON response below.)_"
-                            )
-                        else:
-                            yield self.create_text_message(f"\n📄 **Parsed Document:**\n\n{markdown_content}")
-                    else:
-                        yield self.create_text_message("⚠️ Task completed but no content found. The result files may have been cleaned up.")
-
-                    # Return API raw response directly
-                    yield self.create_json_message(status_result)
+                    # json output = clean structured metadata (full content + raw response)
+                    yield self.create_json_message({
+                        'task_id': task_id,
+                        'status': 'completed',
+                        'file_name': status_result.get('file_name'),
+                        'backend': status_result.get('backend'),
+                        'markdown_content': markdown_content or '',
+                        'markdown_file': data_field.get('markdown_file', ''),
+                        'created_at': status_result.get('created_at'),
+                        'started_at': status_result.get('started_at'),
+                        'completed_at': status_result.get('completed_at'),
+                        'originData': status_result,
+                    })
                     return
 
                 elif task_status == 'failed':
@@ -258,7 +258,7 @@ class ParseDocumentTool(Tool):
 
                 elif task_status in ['pending', 'processing']:
                     # Still processing, wait and retry
-                    yield self.create_text_message(f"⏳ Status: {task_status}... ({int(elapsed_time)}s elapsed)")
+                    yield self.create_log_message("Still processing", {"status": task_status, "elapsed_seconds": int(elapsed_time)})
                     time.sleep(poll_interval)
 
                 else:
