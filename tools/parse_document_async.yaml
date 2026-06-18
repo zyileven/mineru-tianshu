@@ -70,18 +70,6 @@ parameters:
           zh_Hans: "视频处理"
           pt_BR: "Processamento de Vídeo"
           ja_JP: "ビデオ処理"
-      - value: "fasta"
-        label:
-          en_US: "FASTA (Biological Sequences)"
-          zh_Hans: "FASTA（生物序列）"
-          pt_BR: "FASTA (Sequências Biológicas)"
-          ja_JP: "FASTA（生物学的配列）"
-      - value: "genbank"
-        label:
-          en_US: "GenBank (Gene Sequences)"
-          zh_Hans: "GenBank（基因序列）"
-          pt_BR: "GenBank (Sequências Genéticas)"
-          ja_JP: "GenBank（遺伝子配列）"
     label:
       en_US: Processing Backend
       zh_Hans: 处理后端
@@ -92,7 +80,7 @@ parameters:
       zh_Hans: "选择处理后端。自动模式将根据文件类型自动选择最佳后端。"
       pt_BR: "Escolha o backend de processamento. O modo automático selecionará automaticamente o melhor backend com base no tipo de arquivo."
       ja_JP: "処理バックエンドを選択します。自動モードはファイルタイプに基づいて最適なバックエンドを自動選択します。"
-    llm_description: "Processing backend: auto (auto-select based on file type), pipeline (PDF/images), paddleocr-vl/paddleocr-vl-vllm (OCR), sensevoice (audio), video (video processing), fasta/genbank (biological sequences)"
+    llm_description: "Processing backend: auto (auto-select based on file type), pipeline (PDF/images), paddleocr-vl/paddleocr-vl-vllm (OCR), sensevoice (audio), video (video processing)"
     form: form
   - name: lang
     type: select

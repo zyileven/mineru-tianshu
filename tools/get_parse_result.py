@@ -47,14 +47,13 @@ class GetParseResultTool(Tool):
             if api_key:
                 headers['X-API-Key'] = api_key
 
-            # Query task status and result
+            # Query task status and result.
+            # Note: extracted images are now auto-uploaded to object storage (RustFS)
+            # by the server, so the deprecated `upload_images` query param is no longer
+            # sent. Image download URLs are fetched from the dedicated images endpoint.
             status_url = f"{api_server_url}/api/v1/tasks/{task_id}"
-            params = {}
-            if include_images:
-                # Request image information to be included in the response
-                params['upload_images'] = 'true'
 
-            response = requests.get(status_url, params=params, headers=headers, timeout=30, verify=verify_ssl)
+            response = requests.get(status_url, headers=headers, timeout=30, verify=verify_ssl)
             response.raise_for_status()
             result = response.json()
 
@@ -141,18 +140,30 @@ class GetParseResultTool(Tool):
                         'originData': result  # API 原始数据
                     }
 
-                    # Include images info if requested
-                    if include_images:
-                        has_images = data_field.get('has_images', False)
-                        if has_images:
-                            result_json['has_images'] = True
-                            # Include image URLs if available
-                            images = data_field.get('images', [])
-                            if images:
-                                result_json['images'] = images
-                                yield self.create_text_message(f"🖼️ This document contains {len(images)} extracted image(s)")
-                            else:
-                                yield self.create_text_message(f"🖼️ This document contains extracted images")
+                    # Include images info if requested.
+                    # Images are auto-uploaded to object storage (RustFS); their
+                    # download URLs are served by the dedicated images endpoint.
+                    if include_images and data_field.get('has_images', False):
+                        result_json['has_images'] = True
+                        images = []
+                        try:
+                            images_url = f"{api_server_url}/api/v1/tasks/{task_id}/images"
+                            img_resp = requests.get(images_url, headers=headers, timeout=30, verify=verify_ssl)
+                            img_resp.raise_for_status()
+                            for img in img_resp.json().get('images', []):
+                                download_url = img.get('download_url', '')
+                                # Resolve relative paths against the API server base URL
+                                if download_url.startswith('/'):
+                                    download_url = f"{api_server_url}{download_url}"
+                                images.append({**img, 'download_url': download_url})
+                        except requests.exceptions.RequestException as img_err:
+                            yield self.create_text_message(f"⚠️ Could not retrieve image list: {img_err}")
+
+                        if images:
+                            result_json['images'] = images
+                            yield self.create_text_message(f"🖼️ This document contains {len(images)} extracted image(s)")
+                        else:
+                            yield self.create_text_message("🖼️ This document contains extracted images")
 
                     yield self.create_json_message(result_json)
 
