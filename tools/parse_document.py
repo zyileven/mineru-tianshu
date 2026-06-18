@@ -234,17 +234,13 @@ class ParseDocumentTool(Tool):
                             "Task completed but no content found. The result files may have been cleaned up."
                         )
 
-                    # json output = clean structured metadata (full content + raw response)
+                    # json output: backward-compatible. Spread the raw API response at
+                    # top level so legacy paths like arg1[0]["data"]["content"] keep
+                    # working, while also exposing a convenient top-level markdown_content.
                     yield self.create_json_message({
-                        'task_id': task_id,
-                        'status': 'completed',
-                        'file_name': status_result.get('file_name'),
-                        'backend': status_result.get('backend'),
+                        **status_result,
                         'markdown_content': markdown_content or '',
                         'markdown_file': data_field.get('markdown_file', ''),
-                        'created_at': status_result.get('created_at'),
-                        'started_at': status_result.get('started_at'),
-                        'completed_at': status_result.get('completed_at'),
                         'originData': status_result,
                     })
                     return

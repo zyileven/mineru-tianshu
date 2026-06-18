@@ -100,16 +100,13 @@ class GetParseResultTool(Tool):
                     # text output = the full, clean Markdown content (no truncation)
                     yield self.create_text_message(markdown_content)
 
+                    # backward-compatible: spread the raw API response at top level so
+                    # legacy paths like arg1[0]["data"]["content"] keep working, while
+                    # also exposing a convenient top-level markdown_content.
                     result_json = {
-                        'task_id': task_id,
-                        'status': 'completed',
-                        'file_name': file_name,
-                        'backend': backend,
+                        **result,
                         'markdown_content': markdown_content,
                         'markdown_file': markdown_file,
-                        'created_at': created_at,
-                        'started_at': started_at,
-                        'completed_at': completed_at,
                         'originData': result,
                     }
 
@@ -140,9 +137,7 @@ class GetParseResultTool(Tool):
                         "Task completed but no content found. The result files may have been cleaned up."
                     )
                     yield self.create_json_message({
-                        'task_id': task_id,
-                        'status': 'completed',
-                        'file_name': file_name,
+                        **result,
                         'markdown_content': '',
                         'message': 'Result files have been cleaned up (older than retention period)',
                         'originData': result,
